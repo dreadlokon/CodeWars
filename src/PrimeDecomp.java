@@ -11,50 +11,58 @@ Example: n = 86240 should return "(2**5)(5)(7**2)(11)"
  */
 
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
+
 
 public class PrimeDecomp {
+    static long time = 0;
     public static void main(String[] args) {
         long t = System.currentTimeMillis();
-        System.out.println(factors(34751986));
-       // System.out.println(Arrays.toString(generate(34751986)));
+        //System.out.println(isPrime(53679071));
+        System.out.println(factors(53679071));
+        // System.out.println(Arrays.toString(generate(Integer.MAX_VALUE/2)));
         System.out.println(System.currentTimeMillis()-t);
+        System.out.println(time);
     }
-
     public static String factors(int n) {
-        Map<Integer,Integer> primeMap = new TreeMap<>();
         String result = "";
-        primeMap.put(2,0);
         int prime =2;
+        int currentprime=0;
+        int pow=0;
         while (n>1){
-            if (n % prime == 0) {
-                primeMap.put(prime,primeMap.get(prime)+1);
-                n/=prime;
-            }else {
-                prime = getNextPrime(prime);
-                primeMap.put(prime,0);
+            if (isPrime(n)){
+                if (pow > 1) result += String.format("(%d**%d)",currentprime,pow);
+                if (pow == 1 ) result += String.format("(%d)",currentprime);
+                currentprime = n;
+                pow = 1;
+                n = 1;
+            }
+            else {
+                if (n % prime == 0) {
+                    n /= prime;
+                    currentprime = prime;
+                    pow++;
+                } else {
+                    if (pow > 1) result += String.format("(%d**%d)", currentprime, pow);
+                    if (pow == 1) result += String.format("(%d)", currentprime);
+                    currentprime = 0;
+                    pow = 0;
+                    prime = getNextPrime(prime);
+                }
             }
         }
-        for (Map.Entry<Integer,Integer> entry : primeMap.entrySet()){
-            if (entry.getValue() > 0 ) {
-                if (entry.getValue() == 1) result+= String.format("(%d)",entry.getKey());
-                else result+= String.format("(%d**%d)",entry.getKey(),entry.getValue());
-            }
-        }
-
+        if (pow > 1) result += String.format("(%d**%d)",currentprime,pow);
+        if (pow == 1 ) result += String.format("(%d)",currentprime);
         return result;
     }
+
     public static  int getNextPrime (int current){
         if (current == 2) return 3;
-        while (!isPrime(current+1)) current++;
-        return current+1;
+        while (!isPrime(current+2)) current+=2;
+        return current+2;
     }
 
     public static boolean isPrime(int n)
     {
-        if (n == 2 || n == 3) return true;
         if (n <= 1 || n % 2 == 0 || n % 3 == 0)  return false;
         for (int i = 5; i * i <= n; i += 6)
         {
@@ -62,21 +70,4 @@ public class PrimeDecomp {
         }
         return true;
     }
-
-    public static int[] generate (int n) {
-        int[] prime = new int[n+1];
-        prime[0] = 0;
-        prime[1] = 0;
-        for (int i = 2; i <= n ; i ++) prime[i] = 1;
-
-        for (int i = 2; i*i <=n ; i++){
-            if (prime [i] == 1){
-                for (int j = i*i; j <=n ; j+=i) {
-                    prime[j] = 0;
-                }
-            }
-        }
-        return prime;
-    }
-
 }

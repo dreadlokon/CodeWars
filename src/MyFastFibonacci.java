@@ -4,7 +4,7 @@ import java.math.BigInteger;
 public class MyFastFibonacci {
     public static void main(String[] args) {
         long t = System.currentTimeMillis();
-        System.out.println(Fibonacci.fib(BigInteger.valueOf(20000000)));
+        System.out.println(Fibonacci.fib(BigInteger.valueOf(2000000)));
         System.out.println(System.currentTimeMillis()-t);
     }
 
